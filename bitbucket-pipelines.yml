@@ -16,7 +16,7 @@ pipelines:
             - aws configure set aws_access_key_id $AWS_KEY
             - aws configure set aws_secret_access_key $AWS_SECRET
             - aws ecr get-login | sh
-            - docker build -t goc-api-gateway .
+            - docker build -t goc-inventory-service .
             - docker tag goc-inventory-service 577634299670.dkr.ecr.us-west-2.amazonaws.com/goc-inventory-service:prod
             - docker push 577634299670.dkr.ecr.us-west-2.amazonaws.com/goc-inventory-service:prod
     development:
@@ -28,7 +28,7 @@ pipelines:
             - aws configure set aws_access_key_id $AWS_KEY
             - aws configure set aws_secret_access_key $AWS_SECRET
             - aws ecr get-login | sh
-            - docker build -t goc-api-gateway .
+            - docker build -t goc-inventory-service .
             - docker tag goc-inventory-service 577634299670.dkr.ecr.us-west-2.amazonaws.com/goc-inventory-service:development
             - docker push 577634299670.dkr.ecr.us-west-2.amazonaws.com/goc-inventory-service:development
 options:
