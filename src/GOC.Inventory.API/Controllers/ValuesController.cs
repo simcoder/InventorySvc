@@ -1,18 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace GOC.InventoryService.Controllers
+namespace GOC.Inventory.API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
     public class ValuesController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        readonly ILogger _logger;
+
+        public ValuesController(ILoggerFactory loggerFactory)
         {
-            return new string[] { "value1", "value2" };
+            _logger = loggerFactory.CreateLogger<ValuesController>();
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var result = new string[] { "value1", "value2" };
+
+            return Ok(result);
+
         }
 
         // GET api/values/5

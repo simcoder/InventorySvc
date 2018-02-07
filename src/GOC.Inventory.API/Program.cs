@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace GOC.InventoryService
+namespace GOC.Inventory.API
 {
     public class Program
     {
