@@ -19,9 +19,10 @@ using SimpleInjector.Lifestyles;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microphone;
 using Microphone.Core;
+using GOC.Inventory.API.Adapters;
 using GOC.Inventory.API.Interfaces;
 using GOC.Inventory.API.EventBus;
-using GOC.Inventory.API.Adapters;
+using EasyNetQ.Topology;
 
 namespace GOC.Inventory.API
 {
@@ -138,11 +139,12 @@ namespace GOC.Inventory.API
 
             // message bus regs
             var easyNetQLogger = new EasyNetQLoggingAdapter(logger);
-            Container.Register(() => RabbitHutch.CreateBus($"host={AppSettings.Rabbit.Host};" +
+            Container.Register<IAdvancedBus>(() => RabbitHutch.CreateBus($"host={AppSettings.Rabbit.Host};" +
                                                            $"publisherConfirms={AppSettings.Rabbit.PublisherConfirms};" +
                                                            $"timeout={AppSettings.Rabbit.Timeout}", 
                                                            x => x.Register<IEasyNetQLogger>(_ => easyNetQLogger)).Advanced, Lifestyle.Singleton);
-            Container.Register<IEventPublisher<InventoryServiceMessage>, EventPublisher<InventoryServiceMessage>>(Lifestyle.Singleton);
+            Container.Register<IEventPublisher, EventPublisher>(Lifestyle.Singleton);
+            Container.Register<IEventConsumer, EventConsumer>(Lifestyle.Singleton);
 
             // logging regs
             Container.Register(() => logger, Lifestyle.Singleton);

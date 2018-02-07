@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using EasyNetQ;
 using EasyNetQ.Topology;
 using GOC.Inventory.API.Interfaces;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace GOC.Inventory.API.EventBus
 {
-    public class EventPublisher<T> : IDisposable, IEventPublisher<T> where T : class
+    public class EventPublisher : IEventPublisher, IDisposable
     {
         readonly IAdvancedBus _bus;
         readonly IQueue _queue;
@@ -30,18 +32,11 @@ namespace GOC.Inventory.API.EventBus
             _bus.Bind(_exchange, _queue, routingKey: Startup.AppSettings.Rabbit.RoutingKey);
         }
 
-        public void Dispose()
+        public async Task PublishAsync (JObject message)
         {
-            _logger.LogDebug("Disposing");
-            _bus.SafeDispose();
-        }
+            var body = Encoding.UTF8.GetBytes(message.ToString(Newtonsoft.Json.Formatting.None));
 
-        public async Task PublishAsync (T message)
-        {
-            var msg = new Message<T>(message);
-            msg.Properties.AppId = "InventoryService";
-            var g = Exchange.GetDefault();
-            await _bus.PublishAsync(_exchange, Startup.AppSettings.Rabbit.RoutingKey, true, msg)
+            await _bus.PublishAsync(_exchange, Startup.AppSettings.Rabbit.RoutingKey, true, new MessageProperties(), body)
                       .ContinueWith(task =>
             {
                 // this only checks that the task finished
@@ -57,5 +52,11 @@ namespace GOC.Inventory.API.EventBus
                 }
             });
         } 
+
+        public void Dispose()
+        {
+            _logger.LogDebug("Disposing");
+            _bus.SafeDispose();
+        }
     }
 }

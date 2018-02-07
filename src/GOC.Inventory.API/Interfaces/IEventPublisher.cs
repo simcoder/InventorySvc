@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace GOC.Inventory.API.Interfaces
 {
-    public interface IEventPublisher<T> : IDisposable
+    public interface IEventPublisher : IDisposable
     {
-        Task PublishAsync(T message);
+        Task PublishAsync(JObject message);
     }
 }
