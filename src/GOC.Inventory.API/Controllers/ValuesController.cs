@@ -1,40 +1,27 @@
-﻿using System;
-using System.Threading.Tasks;
-using EasyNetQ.Topology;
-using GOC.Inventory.API.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using GOC.Inventory.API.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace GOC.Inventory.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
-    public class ValuesController : Controller
+    //[Authorize]
+    public class ValuesController : BaseController<ValuesController>
     {
-        readonly ILogger _logger;
-        readonly IEventConsumer _con;
-        readonly IEventPublisher _pub;
+        readonly IInventoryService _service;
 
-        public ValuesController(ILoggerFactory loggerFactory, IEventPublisher pub, IEventConsumer con)
+        public ValuesController(ILoggerFactory loggerFactory, IInventoryService service) : base (loggerFactory)
         {
-            _logger = loggerFactory.CreateLogger<ValuesController>();
-            _con = con;
-            _pub = pub;
+            _service = service;
         }
         
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            dynamic jsonObject = new JObject();
-            jsonObject.Date = DateTime.Now;
-            jsonObject.Album = "Me Against the world";
-            jsonObject.Year = 1995;
-            jsonObject.Artist = "2Pac";
-            var result = new string[] { "value1", "value2" };
-            await _pub.PublishAsync(jsonObject);
-            return Ok(result);
+            var result = await _service.CreateInventoryAsync(new Application.DTOs.InventoryDto { });
+
+            return Ok("success");
 
         }
 
@@ -42,7 +29,6 @@ namespace GOC.Inventory.API.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            _con.ConsumeAsync(new Queue(Startup.AppSettings.Rabbit.QueueName, false));
             return "value";
         }
 

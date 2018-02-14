@@ -9,6 +9,14 @@
     <Folder Include="EventBus\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Adapters\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Application\Services\" />
+    <Folder Include="Application\Validations\" />
+    <Folder Include="Application\" />
+    <Folder Include="Application\EventHandlers\" />
+    <Folder Include="Application\Interfaces\" />
+    <Folder Include="Application\DTOs\" />
+    <Folder Include="Application\Helpers\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +36,7 @@
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="Microphone.AspNet" Version="0.6.7" />
     <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0" />
+    <PackageReference Include="SimpleInjector.Extensions.ExecutionContextScoping" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

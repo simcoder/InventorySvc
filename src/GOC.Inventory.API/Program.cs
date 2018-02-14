@@ -13,7 +13,7 @@ namespace GOC.Inventory.API
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                    .UseStartup<Startup>()
-                   .UseUrls("http://*:5020")
+                   .UseUrls("http://*:5200")
                 .Build();
     }
 }

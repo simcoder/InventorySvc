@@ -8,10 +8,7 @@ using Microsoft.Extensions.Logging;
 using SimpleInjector;
 using Serilog;
 using System;
-using System.Reflection;
-using System.Linq;
 using EasyNetQ;
-using GOC.Inventory.Domain.AggregatesModels.ProductAggregate;
 using Microsoft.AspNetCore.Http;
 using SimpleInjector.Integration.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
@@ -22,7 +19,18 @@ using Microphone.Core;
 using GOC.Inventory.API.Adapters;
 using GOC.Inventory.API.Interfaces;
 using GOC.Inventory.API.EventBus;
-using EasyNetQ.Topology;
+using GOC.Inventory.Domain.AggregatesModels.InventoryAggregate;
+using GOC.Inventory.Infrastructure.Repositories;
+using GOC.Inventory.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using GOC.Inventory.Domain.Events;
+using GOC.Inventory.Domain;
+using GOC.Inventory.Domain.AggregatesModels.VendorAggregate;
+using GOC.Inventory.Domain.AggregatesModels.CompanyAggregate;
+using GOC.Inventory.API.Application.Interfaces;
+using GOC.Inventory.API.Application.Services;
+using GOC.Inventory.API.Application.EventHandlers;
+using System.Reflection;
 
 namespace GOC.Inventory.API
 {
@@ -49,6 +57,7 @@ namespace GOC.Inventory.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             //logging
             LoggerFactory = new LoggerFactory();
 
@@ -120,22 +129,17 @@ namespace GOC.Inventory.API
 
         protected void InitializeContainer(ILoggerFactory logger)
         {
+            //repos and service
+            Container.Register<IInventoryRepository, InventoryRepository>(Lifestyle.Scoped);
+            Container.Register<IItemRepository, ItemRepository>(Lifestyle.Scoped);
+            Container.Register<IVendorRepository, VendorRepository>(Lifestyle.Scoped);
+            Container.Register<ICompanyRepository, CompanyRepository>(Lifestyle.Scoped);
+            Container.Register<IInventoryService, InventoryService>(Lifestyle.Scoped);
 
-            // auto register all other dependencies
-            var repositoryAssembly = Assembly.GetEntryAssembly();
-            var registrations = repositoryAssembly.GetExportedTypes()
-                                                  .Where(type =>
-                                                         type.Namespace == "GOC.ApiGateway.Services" ||
-                                                         type.Namespace == "GOC.ApiGateway.Interfaces")
-                                                  .Where(type => type.GetInterfaces().Any())
-                                                  .Select(type => new { Service = type.GetInterfaces().Single(), Implementation = type });
-            foreach (var reg in registrations)
-            {
-                Container.Register(reg.Service, reg.Implementation, Lifestyle.Scoped);
-            }
 
-            //services/repos
-            Container.Register<IProductRepository, Product>(Lifestyle.Scoped);
+            // database context registration
+            var options = DbContextOptionsBuilder();
+            Container.Register(() => new DatabaseContext(options.Options),Lifestyle.Scoped);
 
             // message bus regs
             var easyNetQLogger = new EasyNetQLoggingAdapter(logger);
@@ -143,8 +147,8 @@ namespace GOC.Inventory.API
                                                            $"publisherConfirms={AppSettings.Rabbit.PublisherConfirms};" +
                                                            $"timeout={AppSettings.Rabbit.Timeout}", 
                                                            x => x.Register<IEasyNetQLogger>(_ => easyNetQLogger)).Advanced, Lifestyle.Singleton);
-            Container.Register<IEventPublisher, EventPublisher>(Lifestyle.Singleton);
-            Container.Register<IEventConsumer, EventConsumer>(Lifestyle.Singleton);
+            
+            Container.Register<IEventPublisher, EventPublisher>(Lifestyle.Scoped);
 
             // logging regs
             Container.Register(() => logger, Lifestyle.Singleton);
@@ -153,9 +157,21 @@ namespace GOC.Inventory.API
             //consul regs
             Container.RegisterSingleton<IHealthCheck>(new EmptyHealthCheck());
 
+            //domain events registrations          
+            Container.Register(typeof(IHandle<>), new[] { Assembly.GetEntryAssembly() }, Lifestyle.Scoped);
+            //Container.Register<IHandle<InventoryCreated>, InventoryCreatedEventHandler>(Lifestyle.Scoped);
+            DomainEvents.Container = Container;
+
             // verify
             Container.Verify();
 
+        }
+
+        private DbContextOptionsBuilder<DatabaseContext> DbContextOptionsBuilder()
+        {
+            var options = new DbContextOptionsBuilder<DatabaseContext>();
+            options.UseNpgsql(AppSettings.PostGres.ConnectionString);
+            return options;
         }
     }
 }
