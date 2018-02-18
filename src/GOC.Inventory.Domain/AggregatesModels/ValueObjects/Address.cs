@@ -1,4 +1,6 @@
-﻿namespace GOC.Inventory.Domain.AggregatesModels.ValueObjects
+﻿using Newtonsoft.Json;
+
+namespace GOC.Inventory.Domain.AggregatesModels.ValueObjects
 {
     public class Address : ValueObject<Address>
     {

@@ -1,10 +1,12 @@
-﻿namespace GOC.Inventory.API.Enums
+﻿namespace GOC.Inventory.Domain.Enums
 {
     public enum EventTypes
     {
-        Create = 0,
-        Read =   1,
-        Delete = 2,
-        Update = 3
+        CompanyCreated = 0,
+        CompanyDeleted = 1,
+        CompanyEdited = 2,
+        VendorCreated = 3,
+        VendorDeleted = 4,
+        VendorEdited = 5,
     }
 }

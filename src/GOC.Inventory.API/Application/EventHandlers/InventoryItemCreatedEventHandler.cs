@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using GOC.Inventory.API.Application.Helpers;
 using GOC.Inventory.API.Interfaces;
 using GOC.Inventory.Domain;
 using GOC.Inventory.Domain.Events;
@@ -18,7 +19,8 @@ namespace GOC.Inventory.API.Application.EventHandlers
 
         public async Task HandleAsync(InventoryItemCreated args)
         {
-           // await _eventPub.PublishAsync(JObject.FromObject(args), false);
+            var serializedMessage = GocJsonHelper.SerializeJson(args);
+            await _eventPub.PublishAsync(JObject.FromObject(args));
         }
     }
 }

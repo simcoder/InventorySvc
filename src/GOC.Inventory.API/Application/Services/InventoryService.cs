@@ -25,7 +25,10 @@ namespace GOC.Inventory.API.Application.Services
 
         public async Task<InventoryDto> CreateInventoryAsync(InventoryDto inventory)
         {
-            throw new NotImplementedException();
+            inventory.Id = Guid.NewGuid();
+            var model = new Domain.AggregatesModels.InventoryAggregate.Inventory(inventory.CompanyId, inventory.Id, inventory.UserId);
+            await _inventoryRepo.CreateInventoryAsync(model);
+            return inventory;
         }
 
         public async Task<IEnumerable<InventoryDto>> GetAllInventoriesAsync()

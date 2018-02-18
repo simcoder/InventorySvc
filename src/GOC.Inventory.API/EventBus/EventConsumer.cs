@@ -11,36 +11,44 @@ namespace GOC.Inventory.API.EventBus
     {
         readonly IAdvancedBus _bus;
         readonly ILogger _logger;
+        readonly IMessageRouter _messageRouter;
 
-        public EventConsumer(IAdvancedBus bus, ILoggerFactory loggerFactory)
+        public EventConsumer(IAdvancedBus bus, ILoggerFactory loggerFactory, IMessageRouter messageRouter)
         {
             _bus = bus;
-
             _logger = loggerFactory.CreateLogger("EventConsumer");
+            _messageRouter = messageRouter;
         }
 
-        public async Task ConsumeAsync(IQueue queue)
+        public bool IsMessageBusAlive { get { return _bus.IsConnected; }}
+
+        public async Task ConsumeAsync(IQueue queue) => await Task.Factory.StartNew(() =>
+                                                      {
+                                                         _bus.Consume(queue, (body, properties, info) => Task.Factory.StartNew(() =>
+                                                         {
+                                                            var message = Encoding.UTF8.GetString(body);
+                                                            _messageRouter.Route(message);             
+
+                                                         }).ContinueWith(task =>
+                                                         {
+                                                             if (task.IsCompleted)
+                                                             {
+                                                                 _logger.LogInformation($"Inventory Message succesfully Consumed");
+                                                             }
+                                                             if (task.IsFaulted)
+                                                             {
+                                                                 _logger.LogWarning($"Inventory Message Consumer was not succesful");
+                                                             }
+                                                         }));
+                                                      });
+        public void Consume (IQueue queue)
         {
-           await  Task.Factory.StartNew(() =>
+            _bus.Consume(queue, (body, properties, info) => Task.Factory.StartNew(() =>
             {
-                _bus.Consume(queue, (body, properties, info) => Task.Factory.StartNew(() =>
-               {
-                   var message = Encoding.UTF8.GetString(body);
-                    _logger.LogInformation($"Message being consumed {message}");
-                }).ContinueWith(task=>
-                {
-                    if (task.IsCompleted)
-                    {
-                        _logger.LogInformation($"Inventory Message succesfully Consumed");
-                    }
-                    if (task.IsFaulted)
-                    {
-                        _logger.LogWarning($"Inventory Message Consumer was not succesful");
-                    }
-                }));
-            });
-
+                var message = Encoding.UTF8.GetString(body);
+                _messageRouter.Route(message); 
+            }));
         }
-     }
+    }
 }
 

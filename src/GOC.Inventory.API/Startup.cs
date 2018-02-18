@@ -29,8 +29,9 @@ using GOC.Inventory.Domain.AggregatesModels.VendorAggregate;
 using GOC.Inventory.Domain.AggregatesModels.CompanyAggregate;
 using GOC.Inventory.API.Application.Interfaces;
 using GOC.Inventory.API.Application.Services;
-using GOC.Inventory.API.Application.EventHandlers;
 using System.Reflection;
+using GOC.Inventory.API.Application.BackgroundServices;
+using Microsoft.Extensions.Hosting;
 
 namespace GOC.Inventory.API
 {
@@ -90,12 +91,13 @@ namespace GOC.Inventory.API
                 options.Host = AppSettings.Consul.Host;
                 options.Port = AppSettings.Consul.Port;
             });
+
             //DI
             IntegrateSimpleInjector(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor context)
         {
             if (env.IsDevelopment())
             {
@@ -106,8 +108,9 @@ namespace GOC.Inventory.API
             app.UseMvc()
                .UseMicrophone("InventoryService", "1.0", new Uri($"http://vagrant:5002/"));
             
-            InitializeContainer(LoggerFactory);
+            InitializeContainer(LoggerFactory, context);
 
+            FireupBackgroungTasks();
         }
 
         private void IntegrateSimpleInjector(IServiceCollection services)
@@ -127,19 +130,25 @@ namespace GOC.Inventory.API
             services.UseSimpleInjectorAspNetRequestScoping(Container);
         }
 
-        protected void InitializeContainer(ILoggerFactory logger)
+        protected void InitializeContainer(ILoggerFactory logger, IHttpContextAccessor context)
         {
+            var hybridLifestyle = Lifestyle.CreateHybrid(
+                lifestyleSelector: () => context.HttpContext != null,
+                trueLifestyle: Lifestyle.Scoped,
+                falseLifestyle: Lifestyle.Singleton);
+            
             //repos and service
             Container.Register<IInventoryRepository, InventoryRepository>(Lifestyle.Scoped);
             Container.Register<IItemRepository, ItemRepository>(Lifestyle.Scoped);
-            Container.Register<IVendorRepository, VendorRepository>(Lifestyle.Scoped);
-            Container.Register<ICompanyRepository, CompanyRepository>(Lifestyle.Scoped);
+            Container.Register<IVendorRepository, VendorRepository>(hybridLifestyle);
+            Container.Register<ICompanyRepository, CompanyRepository>(hybridLifestyle);
             Container.Register<IInventoryService, InventoryService>(Lifestyle.Scoped);
 
 
             // database context registration
             var options = DbContextOptionsBuilder();
-            Container.Register(() => new DatabaseContext(options.Options),Lifestyle.Scoped);
+            Container.Register(() => new DatabaseContext(options.Options), hybridLifestyle);
+
 
             // message bus regs
             var easyNetQLogger = new EasyNetQLoggingAdapter(logger);
@@ -148,7 +157,10 @@ namespace GOC.Inventory.API
                                                            $"timeout={AppSettings.Rabbit.Timeout}", 
                                                            x => x.Register<IEasyNetQLogger>(_ => easyNetQLogger)).Advanced, Lifestyle.Singleton);
             
-            Container.Register<IEventPublisher, EventPublisher>(Lifestyle.Scoped);
+            Container.Register<IEventPublisher, EventPublisher>(hybridLifestyle);
+            Container.Register<IEventConsumer, EventConsumer>(hybridLifestyle);
+            Container.Register<IMessageRouter, MessageRouter>(hybridLifestyle);
+
 
             // logging regs
             Container.Register(() => logger, Lifestyle.Singleton);
@@ -159,13 +171,28 @@ namespace GOC.Inventory.API
 
             //domain events registrations          
             Container.Register(typeof(IHandle<>), new[] { Assembly.GetEntryAssembly() }, Lifestyle.Scoped);
-            //Container.Register<IHandle<InventoryCreated>, InventoryCreatedEventHandler>(Lifestyle.Scoped);
             DomainEvents.Container = Container;
+
+            //hosted services for background tasks
+            Container.Register<IHostedService, BackgroundEventSubcriptionService>(hybridLifestyle);
 
             // verify
             Container.Verify();
 
         }
+
+        private void FireupBackgroungTasks()
+        {
+            //// polling task for consuming messages for this service
+            var backGroundService = (BackgroundEventSubcriptionService)Container.GetInstance(typeof(IHostedService));
+
+            backGroundService.StartAsync(new System.Threading.CancellationToken());
+
+            //var eventConsumer = (EventConsumer)Container.GetInstance(typeof(IEventConsumer));
+            //eventConsumer.Consume(new Queue(AppSettings.Rabbit.ConsumableQueue, false));
+
+        }
+
 
         private DbContextOptionsBuilder<DatabaseContext> DbContextOptionsBuilder()
         {

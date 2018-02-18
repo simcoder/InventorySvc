@@ -18,7 +18,7 @@ namespace GOC.Inventory.API.Application.EventHandlers
         public async Task HandleAsync(InventoryCreated args)
         {
             var serializedMessage = GocJsonHelper.SerializeJson(args);
-            await _eventPub.PublishAsync(serializedMessage, false);
+            await _eventPub.PublishAsync(serializedMessage);
         }
     }
 }

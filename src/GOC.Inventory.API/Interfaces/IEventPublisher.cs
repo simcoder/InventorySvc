@@ -5,7 +5,7 @@ namespace GOC.Inventory.API.Interfaces
 {
     public interface IEventPublisher 
     {
-        Task PublishAsync(string message, bool isError);
-        Task PublishAsync(JObject message, bool isError);
+        Task PublishAsync(string message);
+        Task PublishAsync(JObject message);
     }
 }

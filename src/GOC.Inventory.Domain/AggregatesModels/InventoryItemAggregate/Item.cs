@@ -40,24 +40,38 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
         /// <value>The mobile phone.</value>
         public MobilePhone MobilePhone { get; private set; }
 
+        /// <summary>
+        /// Gets the created date UTC.
+        /// </summary>
+        /// <value>The created date UTC.</value>
         public DateTime CreatedDateUtc { get; private set; }
 
+        /// <summary>
+        /// Gets the created by user identifier.
+        /// </summary>
+        /// <value>The created by user identifier.</value>
         public int CreatedByUserId { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether this
+        /// <see cref="T:GOC.Inventory.Domain.AggregatesModels.InventoryAggregate.Item"/> is deleted.
+        /// </summary>
+        /// <value><c>true</c> if is deleted; otherwise, <c>false</c>.</value>
         public bool IsDeleted { get; private set; }
+
 
         public Item(Guid id, string description, Guid vendorId, int userId) : base(id)
         {
-            CreatedDateUtc = DateTime.UtcNow;
             CreatedByUserId = userId;
             Description = description;
             VendorId = vendorId;
             //register domain events
-            DomainEvents.Register<InventoryItemCreated>(HandleInventoryItemCreated);
+            DomainEvents.Register<ItemCreated>(HandleItemCreated);
+            DomainEvents.Register<ItemDeleted>(HandleItemDeleted);
             //initialize Events
             Events = new List<IDomainEvent>();
             //add event
-            var inventoryItemCreatedEvent = new InventoryItemCreated(this, DateTime.UtcNow);
+            var inventoryItemCreatedEvent = new ItemCreated(this, DateTime.UtcNow);
             Events.Add(inventoryItemCreatedEvent);
         }
 
@@ -72,11 +86,14 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
         public void DeleteItem()
         {
             IsDeleted = true;
+            var inventoryItemDeleted = new ItemDeleted(this.Id, DateTime.UtcNow);
+            Events.Add(inventoryItemDeleted);
         }
 
         public void SaleItem(Guid companyIdSoldTo)
         {
             SoldToCompanyId = companyIdSoldTo;
+            //TODO add event
         }
 
         public bool IsItemSold()
@@ -87,11 +104,18 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
         public void SetItemAsMobilePhone(MobilePhone mobilePhone)
         {
             MobilePhone = mobilePhone;
+            //TODO add event
         }
+
         #endregion
 
-        void HandleInventoryItemCreated(InventoryItemCreated obj)
+        void HandleItemCreated(ItemCreated obj)
         {
+            CreatedDateUtc = obj.DateOccurredUtc;
+        }
+        void HandleItemDeleted(ItemDeleted obj)
+        {
+            DeleteItem();
         }
     }
 }

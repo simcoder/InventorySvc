@@ -22,13 +22,12 @@ namespace GOC.Inventory.API
         public string Host { get; set; }
         public string PublisherConfirms { get; set; }
         public string Timeout { get; set; }
-        public IList<ConsumerQueue> ConsumerQueues { get; set; } 
+        public IList<PublishingQueue> PublishingQueues { get; set; } 
+        public string ConsumableQueue { get; set; }
         public string ExchangeName { get; set; }
-        public string ErrorExchangeName { get; set; }
-        public string ErrorQueueName { get; set; }
         public string RoutingKey { get; set; }
     }
-    public class ConsumerQueue
+    public class PublishingQueue
     {
         public string Name { get; set; }
     }

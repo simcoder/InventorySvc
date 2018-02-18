@@ -1,16 +1,15 @@
 ﻿using System.Threading.Tasks;
-using EasyNetQ;
+using GOC.Inventory.API.Application.Helpers;
 using GOC.Inventory.API.Interfaces;
 using GOC.Inventory.Domain.Events;
-using Newtonsoft.Json.Linq;
 
 namespace GOC.Inventory.Domain.Handlers
 {
-    public class NotifyNewItemAddedToInventory : IHandle<InventoryItemAdded>
+    public class ItemAddedToInventoryHandler : IHandle<InventoryItemAdded>
     {
         private readonly IEventPublisher _eventPub;
 
-        public NotifyNewItemAddedToInventory(IEventPublisher eventPub)
+        public ItemAddedToInventoryHandler(IEventPublisher eventPub)
         {
             _eventPub = eventPub;
         }
@@ -18,7 +17,8 @@ namespace GOC.Inventory.Domain.Handlers
 
         public async Task HandleAsync(InventoryItemAdded args)
         {
-           // await _eventPub.PublishAsync(JObject.FromObject(args), false);
+            var serializedMessage = GocJsonHelper.SerializeJson(args);
+            await _eventPub.PublishAsync(serializedMessage);
         }
     }
 }

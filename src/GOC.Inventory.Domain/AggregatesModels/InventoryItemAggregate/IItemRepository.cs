@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
 {
     public interface IItemRepository 
     {
-        Item CreateInventoryItem(Item inventoryItem);
+        Task<Item> CreateInventoryItem(Item inventoryItem);
 
-        Item UpdateInventoryItem(Guid id, Item inventoryUpdated);
+        Task MarkAsSold(Guid id, Guid companyId);
 
-        bool DeleteInventoryItem(Guid id);
+        Task DeleteInventoryItem(Guid id);
     }
 }

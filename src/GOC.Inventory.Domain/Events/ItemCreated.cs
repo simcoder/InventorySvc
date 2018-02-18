@@ -5,19 +5,19 @@ using Newtonsoft.Json;
 namespace GOC.Inventory.Domain.Events
 {
     [JsonObject]
-    public class InventoryItemCreated : IDomainEvent
+    public class ItemCreated : IDomainEvent
     {
         public DateTime DateOccurredUtc { get; private set; }
 
-        public Item CreatedInventoryItem { get; private set; }
+        public Item Item { get; private set; }
 
-        public InventoryItemCreated(Item item, DateTime dateAdded)
+        public ItemCreated(Item item, DateTime dateAdded)
         {
-            CreatedInventoryItem = item;
+            Item = item;
             DateOccurredUtc = dateAdded;
         }
 
-        private InventoryItemCreated()
+        private ItemCreated()
         {
         }
     }

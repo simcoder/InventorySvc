@@ -4,7 +4,8 @@ namespace GOC.Inventory.API.Application.DTOs
 {
     public class InventoryDto
     {
-        public int CompanyId { get; set; }
-        DateTime CreatedDate { get; set; }
+        public Guid Id { get; set; }
+        public Guid CompanyId { get; set; }
+        public int UserId { get; set; }
     }
 }

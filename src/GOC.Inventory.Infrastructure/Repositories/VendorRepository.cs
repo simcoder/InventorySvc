@@ -1,11 +1,12 @@
 ﻿using System;
 using GOC.Inventory.Domain.AggregatesModels.VendorAggregate;
+using Microsoft.Extensions.Logging;
 
 namespace GOC.Inventory.Infrastructure.Repositories
 {
-    public class VendorRepository : IVendorRepository
+    public class VendorRepository : RepositoryBase<VendorRepository>, IVendorRepository
     {
-        public VendorRepository()
+        public VendorRepository(ILoggerFactory loggerFactory) : base(loggerFactory)
         {
         }
 
