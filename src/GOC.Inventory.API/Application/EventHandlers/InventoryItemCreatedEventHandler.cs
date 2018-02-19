@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace GOC.Inventory.API.Application.EventHandlers
 {
-    public class InventoryItemCreatedEventHandler : IHandle<InventoryItemCreated>
+    public class InventoryItemCreatedEventHandler : IHandle<ItemCreated>
     {
         private readonly IEventPublisher _eventPub;
 
@@ -17,7 +17,7 @@ namespace GOC.Inventory.API.Application.EventHandlers
         }
 
 
-        public async Task HandleAsync(InventoryItemCreated args)
+        public async Task HandleAsync(ItemCreated args)
         {
             var serializedMessage = GocJsonHelper.SerializeJson(args);
             await _eventPub.PublishAsync(JObject.FromObject(args));
