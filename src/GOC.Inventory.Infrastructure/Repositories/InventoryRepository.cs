@@ -52,7 +52,7 @@ namespace GOC.Inventory.Infrastructure.Repositories
                 {
                     throw new Exception($"company id {inventory.CompanyId} does not exist");
                 }
-                await _context.AddAsync(inventory);
+                await _context.Inventories.AddAsync(inventory);
                 await _context.SaveChangesAsync();
                 var createdInventoryEvent = (InventoryCreated) inventory.Events.Single(x => x.GetType() == typeof(InventoryCreated));
                 DomainEvents.RaiseAsync(createdInventoryEvent);
