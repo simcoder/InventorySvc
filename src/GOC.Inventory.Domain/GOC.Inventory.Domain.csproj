@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="AggregatesModels\" />
+    <Folder Include="Enums\" />
+    <Folder Include="AggregatesModels\InventoryAggregate\" />
+    <Folder Include="Events\" />
+    <Folder Include="AggregatesModels\VendorAggregate\" />
+    <Folder Include="AggregatesModels\ValueObjects\" />
+    <Folder Include="AggregatesModels\CompanyAggregate\" />
+    <Folder Include="AggregatesModels\InventoryItemAggregate\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SimpleInjector" Version="4.0.12" />
+    <PackageReference Include="SimpleInjector.Extensions.ExecutionContextScoping" Version="4.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="EasyNetQ" Version="2.2.0" />
+  </ItemGroup>
+</Project>
