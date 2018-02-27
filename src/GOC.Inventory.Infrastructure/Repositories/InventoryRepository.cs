@@ -16,7 +16,7 @@ namespace GOC.Inventory.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddInventoryItemAsync(Guid itemId, Guid inventoryId)
+        public async Task AddInventoryItemAsync(Guid itemId, Guid inventoryId, Guid userId)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace GOC.Inventory.Infrastructure.Repositories
                 {
                     throw new Exception($"inventory id {inventoryId} does not exist");
                 }
-                inventory.AddInventoryItem(item);
+                inventory.AddInventoryItem(item, userId);
                 await _context.SaveChangesAsync();
                 var addInventoryItem = (InventoryItemAdded)inventory.Events.Single(x => x.GetType() == typeof(InventoryItemAdded));
                 DomainEvents.RaiseAsync(addInventoryItem);
@@ -66,7 +66,7 @@ namespace GOC.Inventory.Infrastructure.Repositories
             return inventory;
         }
 
-        public async Task RemoveInventoryItemAsync(Guid itemId, Guid inventoryId)
+        public async Task RemoveInventoryItemAsync(Guid itemId, Guid inventoryId, Guid userId)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace GOC.Inventory.Infrastructure.Repositories
                 {
                     throw new Exception($"inventory id {inventoryId} does not exist");
                 }
-                inventory.RemoveInventoryItem(item);
+                inventory.RemoveInventoryItem(item, userId);
                 await _context.SaveChangesAsync();
                 var removedInventoryItem = (InventoryItemRemoved)inventory.Events.Single(x => x.GetType() == typeof(InventoryItemRemoved));
                 DomainEvents.RaiseAsync(removedInventoryItem);

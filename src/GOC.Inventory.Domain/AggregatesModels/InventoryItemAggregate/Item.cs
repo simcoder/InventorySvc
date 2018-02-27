@@ -50,7 +50,10 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
         /// Gets the created by user identifier.
         /// </summary>
         /// <value>The created by user identifier.</value>
-        public int CreatedByUserId { get; private set; }
+        public Guid CreatedByUserId { get; private set; }
+
+        public Guid? LastUpdatedUserId { get; private set; }
+
 
         /// <summary>
         /// Gets a value indicating whether this
@@ -60,7 +63,7 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
         public bool IsDeleted { get; private set; }
 
 
-        public Item(Guid id, string description, Guid vendorId, int userId) : base(id)
+        public Item(Guid id, string description, Guid vendorId, Guid userId) : base(id)
         {
             CreatedByUserId = userId;
             Description = description;

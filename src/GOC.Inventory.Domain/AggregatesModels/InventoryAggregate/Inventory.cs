@@ -13,23 +13,21 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
 
         public DateTime CreatedDateUtc { get; private set; }
 
-        public int CreatedByUserId { get; private set; }
+        public Guid CreatedByUserId { get; private set; }
+
+        public Guid? LastUpdatedUserId { get; private set; }
+
 
         public bool IsDeleted { get; private set; }
 
         //not persisted
         public IList<IDomainEvent> Events { get; private set; }
 
-        public Inventory(Guid companyId, Guid id, int userId) : base(id)
+        public Inventory(Guid companyId, Guid id, Guid userId) : base(id)
         {
             CompanyId = companyId;
             CreatedByUserId = userId;
             CreatedDateUtc = DateTime.UtcNow;
-            //register applicable events
-            DomainEvents.Register<InventoryItemAdded>(HandleInventoryItemAdded);
-            DomainEvents.Register<InventoryCreated>(HandleInventoryCreated);
-            DomainEvents.Register<InventoryItemRemoved>(HandleInventoryItemRemoved);
-
 
             //initialize inventory
             Items = new List<Item>();
@@ -39,7 +37,6 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
             //raise inventory created event
             var inventoryCreatedEvent = new InventoryCreated(this, DateTime.UtcNow);
             Events.Add(inventoryCreatedEvent);
-            //DomainEvents.RaiseAsync(inventoryCreatedEvent);
         }
 
         // required by EF
@@ -49,27 +46,26 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
 
         #region Behavious
 
-        public void AddInventoryItem(Item item)
+        public void AddInventoryItem(Item item, Guid userId)
         {
             //validate item before adding
             //TODO
-
+            LastUpdatedUserId = userId;
             //Add Item
             Items.Add(item);
             //raise inventory item added event
             var inventoryItemAddedEvent = new InventoryItemAdded(item, DateTime.UtcNow);
             Events.Add(inventoryItemAddedEvent);
-            //DomainEvents.Raise(inventoryItemAddedEvent);
         }
 
-        public void RemoveInventoryItem(Item item)
+        public void RemoveInventoryItem(Item item, Guid userId)
         {
             //verify Item exists in inventory
             if (!CheckInventoryItemExists(item.Id))
             {
                 throw new ArgumentException("Thhis item does is not in this inventory", nameof(item));
             }
-
+            LastUpdatedUserId = userId;
             Items.Remove(item);
             // adding event
             var inventoryItemRemovedEvent = new InventoryItemRemoved(item, DateTime.UtcNow);
@@ -83,20 +79,5 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
 
         #endregion
 
-        #region eventHandlers
-
-        void HandleInventoryCreated(InventoryCreated obj)
-        {
-        }
-
-        void HandleInventoryItemRemoved(InventoryItemRemoved obj)
-        {
-        }
-
-        void HandleInventoryItemAdded(InventoryItemAdded obj)
-        {
-        }
-
-        #endregion
     }
 }

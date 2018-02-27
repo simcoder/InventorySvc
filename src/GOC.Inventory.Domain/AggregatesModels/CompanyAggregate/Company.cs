@@ -11,14 +11,16 @@ namespace GOC.Inventory.Domain.AggregatesModels.CompanyAggregate
         public string PhoneNumber { get; private set; }
         public Address Address { get; private set; }
         public DateTime CreatedDateUtc { get; private set; }
-        public int CreatedByUserId { get; private set; }
+        public Guid CreatedByUserId { get; private set; }
+        public Guid? LastUpdatedUserId { get; private set; }
+
 
         public bool IsDeleted { get; private set; }
 
         //not persisted
         public IList<IDomainEvent> Events { get; private set; }
 
-        public Company (Guid id, string name, string phoneNumber, Address address, int userId) : base (id)
+        public Company (Guid id, string name, string phoneNumber, Address address, Guid userId) : base (id)
         {
             Name = name;
             PhoneNumber = phoneNumber;

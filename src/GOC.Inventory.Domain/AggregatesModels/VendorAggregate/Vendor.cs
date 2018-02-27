@@ -15,14 +15,17 @@ namespace GOC.Inventory.Domain.AggregatesModels.VendorAggregate
 
         public DateTime CreatedDateUtc { get; private set; }
 
-        public int CreatedByUserId { get; private set; }
+        public Guid CreatedByUserId { get; private set; }
+
+        public Guid? LastUpdatedUserId { get; private set; }
+
 
         public bool IsDeleted { get; private set; }
 
         //not persisted
         public IList<IDomainEvent> Events { get; private set; }
 
-        public Vendor (string name, string phoneNumber, int userId ,Guid id) : base (id)
+        public Vendor (string name, string phoneNumber, Guid userId ,Guid id) : base (id)
         {
             CreatedDateUtc = DateTime.UtcNow;
             CreatedByUserId = userId;

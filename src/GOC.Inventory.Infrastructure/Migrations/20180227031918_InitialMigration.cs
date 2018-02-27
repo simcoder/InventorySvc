@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GOC.Inventory.Infrastructure.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,6 +13,10 @@ namespace GOC.Inventory.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CreatedByUserId = table.Column<Guid>(nullable: false),
+                    CreatedDateUtc = table.Column<DateTime>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    LastUpdatedUserId = table.Column<Guid>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
                     Address_AddressLine1 = table.Column<string>(nullable: true),
@@ -31,7 +35,11 @@ namespace GOC.Inventory.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    CompanyId = table.Column<Guid>(nullable: false)
+                    CompanyId = table.Column<Guid>(nullable: false),
+                    CreatedByUserId = table.Column<Guid>(nullable: false),
+                    CreatedDateUtc = table.Column<DateTime>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    LastUpdatedUserId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,8 +51,17 @@ namespace GOC.Inventory.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CreatedByUserId = table.Column<Guid>(nullable: false),
+                    CreatedDateUtc = table.Column<DateTime>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    LastUpdatedUserId = table.Column<Guid>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true)
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    Address_AddressLine1 = table.Column<string>(nullable: true),
+                    Address_AddressLine2 = table.Column<string>(nullable: true),
+                    Address_City = table.Column<string>(nullable: true),
+                    Address_State = table.Column<string>(nullable: true),
+                    Address_ZipCode = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,8 +73,14 @@ namespace GOC.Inventory.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CompanyId = table.Column<Guid>(nullable: false),
+                    CreatedByUserId = table.Column<Guid>(nullable: false),
+                    CreatedDateUtc = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     InventoryId = table.Column<Guid>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    LastUpdatedUserId = table.Column<Guid>(nullable: true),
+                    SoldToCompanyId = table.Column<Guid>(nullable: true),
                     VendorId = table.Column<Guid>(nullable: false),
                     MobilePhone_Carrier = table.Column<string>(nullable: true),
                     MobilePhone_Color = table.Column<string>(nullable: true),

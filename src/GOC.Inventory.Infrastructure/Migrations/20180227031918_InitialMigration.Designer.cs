@@ -12,8 +12,8 @@ using System;
 namespace GOC.Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20180213170056_AddBasicFields")]
-    partial class AddBasicFields
+    [Migration("20180227031918_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,11 +27,13 @@ namespace GOC.Inventory.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CreatedByUserId");
+                    b.Property<Guid>("CreatedByUserId");
 
                     b.Property<DateTime>("CreatedDateUtc");
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid?>("LastUpdatedUserId");
 
                     b.Property<string>("Name");
 
@@ -49,11 +51,13 @@ namespace GOC.Inventory.Infrastructure.Migrations
 
                     b.Property<Guid>("CompanyId");
 
-                    b.Property<int>("CreatedByUserId");
+                    b.Property<Guid>("CreatedByUserId");
 
                     b.Property<DateTime>("CreatedDateUtc");
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid?>("LastUpdatedUserId");
 
                     b.HasKey("Id");
 
@@ -65,7 +69,9 @@ namespace GOC.Inventory.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CreatedByUserId");
+                    b.Property<Guid>("CompanyId");
+
+                    b.Property<Guid>("CreatedByUserId");
 
                     b.Property<DateTime>("CreatedDateUtc");
 
@@ -74,6 +80,10 @@ namespace GOC.Inventory.Infrastructure.Migrations
                     b.Property<Guid?>("InventoryId");
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid?>("LastUpdatedUserId");
+
+                    b.Property<Guid?>("SoldToCompanyId");
 
                     b.Property<Guid>("VendorId");
 
@@ -89,11 +99,13 @@ namespace GOC.Inventory.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("CreatedByUserId");
+                    b.Property<Guid>("CreatedByUserId");
 
                     b.Property<DateTime>("CreatedDateUtc");
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<Guid?>("LastUpdatedUserId");
 
                     b.Property<string>("Name");
 

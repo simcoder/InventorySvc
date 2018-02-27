@@ -31,13 +31,14 @@ namespace GOC.Inventory.API.EventBus
 
                                                          }).ContinueWith(task =>
                                                          {
-                                                             if (task.IsCompleted)
+                                                             if (task.IsCompletedSuccessfully)
                                                              {
                                                                  _logger.LogInformation($"Inventory Message succesfully Consumed");
                                                              }
-                                                             if (task.IsFaulted)
+                                                             else
                                                              {
                                                                  _logger.LogWarning($"Inventory Message Consumer was not succesful");
+                                                                 throw new EasyNetQException();
                                                              }
                                                          }));
                                                       });

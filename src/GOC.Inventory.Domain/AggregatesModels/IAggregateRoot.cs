@@ -5,7 +5,9 @@ namespace GOC.Inventory.Domain.AggregatesModels
     {
         DateTime CreatedDateUtc { get; }
 
-        int CreatedByUserId { get; }
+        Guid CreatedByUserId { get; }
+
+        Guid? LastUpdatedUserId { get; }
 
         bool IsDeleted { get; }
     }

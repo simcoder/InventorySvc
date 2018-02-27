@@ -7,8 +7,8 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
     {
         Task<Inventory> CreateInventoryAsync (Inventory inventory);
 
-        Task AddInventoryItemAsync(Guid itemId, Guid inventoryId);
+        Task AddInventoryItemAsync(Guid itemId, Guid inventoryId, Guid userId);
 
-        Task RemoveInventoryItemAsync(Guid itemId, Guid inventoryId);
+        Task RemoveInventoryItemAsync(Guid itemId, Guid inventoryId, Guid userId);
     }
 }
