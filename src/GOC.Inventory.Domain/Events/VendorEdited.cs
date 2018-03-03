@@ -1,22 +1,22 @@
 ﻿using System;
-using GOC.Inventory.Domain.AggregatesModels.CompanyAggregate;
+using GOC.Inventory.Domain.AggregatesModels.VendorAggregate;
 using Newtonsoft.Json;
 
 namespace GOC.Inventory.Domain.Events
 {
     [JsonObject]
-    public class CompanyEdited : IDomainEvent
+    public class VendorEdited : IDomainEvent
     {
-        
-        public CompanyEdited(Company companyEdited, DateTime dateEdited, Guid userId)
+        public VendorEdited(Vendor vendorEdited, DateTime dateEdited, Guid userId)
         {
-            CompanyEditedObj = companyEdited;
+            VendorEditedObj = vendorEdited;
             DateOccurredUtc = dateEdited;
             UserId = userId;
         }
 
-        public Company CompanyEditedObj { get; private set; }
+        public Vendor VendorEditedObj { get; private set; }
 
+        [JsonProperty]
         public DateTime DateOccurredUtc { get; private set; }
 
         public Guid UserId { get; private set; }

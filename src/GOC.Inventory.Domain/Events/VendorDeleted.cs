@@ -4,17 +4,18 @@ using Newtonsoft.Json;
 namespace GOC.Inventory.Domain.Events
 {
     [JsonObject]
-    public class ItemDeleted : IDomainEvent
+    public class VendorDeleted : IDomainEvent
     {
-        public ItemDeleted(Guid id, DateTime dateDeleted, Guid userId)
+        public VendorDeleted(Guid id, DateTime dateDeleted, Guid userId)
         {
-            ItemDeletedId = id;
+            VendorDeletedId = id;
             DateOccurredUtc = dateDeleted;
             UserId = userId;
         }
 
-        public Guid ItemDeletedId { get; private set; }
+        public Guid VendorDeletedId { get; private set; }
 
+        [JsonProperty]
         public DateTime DateOccurredUtc { get; private set; }
 
         public Guid UserId { get; private set; }

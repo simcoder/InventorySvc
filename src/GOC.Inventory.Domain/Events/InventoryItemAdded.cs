@@ -8,11 +8,17 @@ namespace GOC.Inventory.Domain.Events
     public class InventoryItemAdded : IDomainEvent
     {
         public DateTime DateOccurredUtc { get; private set; }
+
         public Item ItemAdded { get; private set; }
-        public InventoryItemAdded (Item item, DateTime dateAdded)
+
+        public Guid UserId { get; private set; }
+
+
+        public InventoryItemAdded (Item item, DateTime dateAdded, Guid userId)
         {
             ItemAdded = item;
             DateOccurredUtc = dateAdded;
+            UserId = userId;
         }
 
         //required by simple injector

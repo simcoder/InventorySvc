@@ -68,13 +68,10 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
             CreatedByUserId = userId;
             Description = description;
             VendorId = vendorId;
-            //register domain events
-            DomainEvents.Register<ItemCreated>(HandleItemCreated);
-            DomainEvents.Register<ItemDeleted>(HandleItemDeleted);
             //initialize Events
             Events = new List<IDomainEvent>();
             //add event
-            var inventoryItemCreatedEvent = new ItemCreated(this, DateTime.UtcNow);
+            var inventoryItemCreatedEvent = new ItemCreated(this, DateTime.UtcNow, userId);
             Events.Add(inventoryItemCreatedEvent);
         }
 
@@ -86,10 +83,10 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
         #region Behaviours
 
 
-        public void DeleteItem()
+        public void DeleteItem(Guid userId)
         {
             IsDeleted = true;
-            var inventoryItemDeleted = new ItemDeleted(this.Id, DateTime.UtcNow);
+            var inventoryItemDeleted = new ItemDeleted(this.Id, DateTime.UtcNow, userId);
             Events.Add(inventoryItemDeleted);
         }
 
@@ -112,13 +109,5 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
 
         #endregion
 
-        void HandleItemCreated(ItemCreated obj)
-        {
-            CreatedDateUtc = obj.DateOccurredUtc;
-        }
-        void HandleItemDeleted(ItemDeleted obj)
-        {
-            DeleteItem();
-        }
     }
 }

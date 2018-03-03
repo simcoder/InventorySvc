@@ -35,7 +35,7 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
             Events = new List<IDomainEvent>();
 
             //raise inventory created event
-            var inventoryCreatedEvent = new InventoryCreated(this, DateTime.UtcNow);
+            var inventoryCreatedEvent = new InventoryCreated(this, DateTime.UtcNow, userId);
             Events.Add(inventoryCreatedEvent);
         }
 
@@ -54,7 +54,7 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
             //Add Item
             Items.Add(item);
             //raise inventory item added event
-            var inventoryItemAddedEvent = new InventoryItemAdded(item, DateTime.UtcNow);
+            var inventoryItemAddedEvent = new InventoryItemAdded(item, DateTime.UtcNow, userId);
             Events.Add(inventoryItemAddedEvent);
         }
 
@@ -68,7 +68,7 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
             LastUpdatedUserId = userId;
             Items.Remove(item);
             // adding event
-            var inventoryItemRemovedEvent = new InventoryItemRemoved(item, DateTime.UtcNow);
+            var inventoryItemRemovedEvent = new InventoryItemRemoved(item, DateTime.UtcNow, userId);
             Events.Add(inventoryItemRemovedEvent);
         }
 

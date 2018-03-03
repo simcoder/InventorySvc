@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using GOC.Inventory.API.Application.DTOs;
 using GOC.Inventory.API.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,28 @@ namespace GOC.Inventory.API.Controllers
             _inventoryService = inventoryService;
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]InventoryDto inventory)
         {
+            inventory.UserId = UserInfo.UserId;
             var result = await _inventoryService.CreateInventoryAsync(inventory);
             return Ok(result);
         }
+
+        [HttpPut("/api/companies/{companyId}/[controller]/{inventoryId}")]
+        public async Task<IActionResult> AddOrRemoveInventoryItem(Guid companyId, Guid inventoryId, [FromQuery]Guid itemId, [FromQuery]string command)
+        {
+            if(command == "add")
+            {
+                // add inventory
+            }
+            else if(command == "remove")
+            {
+                //remove item
+            }
+            return Ok();
+        }
+
     }
 }

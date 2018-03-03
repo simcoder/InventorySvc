@@ -143,14 +143,15 @@ namespace GOC.Inventory.API
             Container.Register<IVendorRepository, VendorRepository>(hybridLifestyle);
             Container.Register<ICompanyRepository, CompanyRepository>(hybridLifestyle);
             Container.Register<IInventoryService, InventoryService>(Lifestyle.Scoped);
+            Container.Register<IItemService, ItemService>(Lifestyle.Scoped);
 
 
-            // database context registration
+            //database context registration
             var options = DbContextOptionsBuilder();
             Container.Register(() => new DatabaseContext(options.Options), hybridLifestyle);
 
 
-            // message bus regs
+            //message bus regs
             var easyNetQLogger = new EasyNetQLoggingAdapter(logger);
             Container.Register<IAdvancedBus>(() => RabbitHutch.CreateBus($"host={AppSettings.Rabbit.Host};" +
                                                            $"publisherConfirms={AppSettings.Rabbit.PublisherConfirms};" +
@@ -162,7 +163,7 @@ namespace GOC.Inventory.API
             Container.Register<IMessageRouter, MessageRouter>(hybridLifestyle);
 
 
-            // logging regs
+            //logging regs
             Container.Register(() => logger, Lifestyle.Singleton);
             Container.Register(typeof(ILogger<>), typeof(LoggingAdapter<>));
 
@@ -176,21 +177,16 @@ namespace GOC.Inventory.API
             //hosted services for background tasks
             Container.Register<IHostedService, BackgroundEventSubcriptionService>(hybridLifestyle);
 
-            // verify
+            //verify
             Container.Verify();
 
         }
 
         private void FireupBackgroungTasks()
         {
-            //// polling task for consuming messages for this service
+            // polling task for consuming messages for this service
             var backGroundService = (BackgroundEventSubcriptionService)Container.GetInstance(typeof(IHostedService));
-
             backGroundService.StartAsync(new System.Threading.CancellationToken());
-
-            //var eventConsumer = (EventConsumer)Container.GetInstance(typeof(IEventConsumer));
-            //eventConsumer.Consume(new Queue(AppSettings.Rabbit.ConsumableQueue, false));
-
         }
 
 

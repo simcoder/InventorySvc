@@ -8,12 +8,16 @@ namespace GOC.Inventory.Domain.Events
     {
         public DateTime DateOccurredUtc { get; private set; }
 
+        [JsonProperty]
         public AggregatesModels.InventoryAggregate.Inventory Inventory { get; private set; }
 
-        public InventoryCreated(AggregatesModels.InventoryAggregate.Inventory inventory, DateTime dateAdded)
+        public Guid UserId { get; private set; }
+
+        public InventoryCreated(AggregatesModels.InventoryAggregate.Inventory inventory, DateTime dateAdded, Guid userdId)
         {
             Inventory = inventory;
             DateOccurredUtc = dateAdded;
+            UserId = userdId;
         }
 
         //required for SimpleInjector

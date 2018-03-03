@@ -4,5 +4,6 @@ namespace GOC.Inventory.Domain.Events
     public interface IDomainEvent
     {
         DateTime DateOccurredUtc { get; }
+        Guid UserId { get; }
     }
 }

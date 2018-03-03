@@ -19,7 +19,6 @@ namespace GOC.Inventory.Domain.AggregatesModels.VendorAggregate
 
         public Guid? LastUpdatedUserId { get; private set; }
 
-
         public bool IsDeleted { get; private set; }
 
         //not persisted
@@ -36,6 +35,19 @@ namespace GOC.Inventory.Domain.AggregatesModels.VendorAggregate
         // required by EF
         private Vendor() : base (Guid.NewGuid())
         {
+        }
+
+        public void DeleteVendor()
+        {
+            IsDeleted = true;
+        }
+
+        public void EditVendor(Vendor editedVendor, Guid userId)
+        {
+            Name = editedVendor.Name;
+            Address = editedVendor.Address;
+            PhoneNumber = editedVendor.PhoneNumber;
+            LastUpdatedUserId = userId;
         }
     }
 }

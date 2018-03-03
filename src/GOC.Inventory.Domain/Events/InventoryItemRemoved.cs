@@ -8,12 +8,17 @@ namespace GOC.Inventory.Domain.Events
     public class InventoryItemRemoved : IDomainEvent
     {
         public DateTime DateOccurredUtc { get; private set; }
+
         public Item ItemRemoved { get; private set; }
 
-        public InventoryItemRemoved(Item item, DateTime dateRemoved)
+        public Guid UserId { get; private set; }
+
+
+        public InventoryItemRemoved(Item item, DateTime dateRemoved, Guid userdId)
         {
             ItemRemoved = item;
             DateOccurredUtc = dateRemoved;
+            UserId = userdId;
         }
         //required by Simple Injector
         private InventoryItemRemoved()

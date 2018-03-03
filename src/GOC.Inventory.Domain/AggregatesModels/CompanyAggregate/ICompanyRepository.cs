@@ -5,9 +5,9 @@ namespace GOC.Inventory.Domain.AggregatesModels.CompanyAggregate
 {
     public interface ICompanyRepository
     {
-        Task<Company> GetCompanyById(Guid companyId);
-        Task CreateCompany(Company company);
-        Task DeleteCompany(Guid companyId);
-        Task EditCompany(Company editedCompany);
+        Task<Company> GetCompanyByIdAsync(Guid companyId);
+        Task CreateCompanyAsync(Company company);
+        Task DeleteCompanyAsync(Guid companyId);
+        Task EditCompanyAsync(Company editedCompany, Guid userId);
     }
 }

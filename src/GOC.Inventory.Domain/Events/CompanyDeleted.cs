@@ -7,11 +7,14 @@ namespace GOC.Inventory.Domain.Events
     public class CompanyDeleted : IDomainEvent
     {
         
-        public CompanyDeleted(Guid id, DateTime dateDeleted)
+        public CompanyDeleted(Guid id, DateTime dateDeleted, Guid userId)
         {
             CompanyDeletedId = id;
             DateOccurredUtc = dateDeleted;
+            UserId = userId;
         }
+
+        public Guid UserId { get; private set; }
 
         public Guid CompanyDeletedId { get; private set; }
 

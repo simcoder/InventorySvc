@@ -7,8 +7,8 @@ namespace GOC.Inventory.Domain.AggregatesModels.InventoryAggregate
     {
         Task<Item> CreateInventoryItem(Item inventoryItem);
 
-        Task MarkAsSold(Guid id, Guid companyId);
+        Task MarkAsSold(Guid id, Guid companyId, Guid userId);
 
-        Task DeleteInventoryItem(Guid id);
+        Task DeleteInventoryItem(Guid id, Guid userId);
     }
 }

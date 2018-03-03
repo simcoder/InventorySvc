@@ -9,43 +9,81 @@ namespace GOC.Inventory.Infrastructure.Repositories
     {
         readonly DatabaseContext _context;
         readonly ILogger _logger;
+
         public CompanyRepository(DatabaseContext context, ILoggerFactory loggerFactory)
         {
             _context = context;
             _logger = loggerFactory.CreateLogger<CompanyRepository>();
         }
 
-        public async Task CreateCompany(Company company)
+        public async Task CreateCompanyAsync(Company company)
         {
-            await _context.AddAsync(company);
             try
             {
+                await _context.Companies.AddAsync(company);
                 await _context.SaveChangesAsync();
                 _logger.LogDebug("Succesfully created company");
             }
             catch(Exception ex)
             {
-                _logger.LogDebug(ex.Message);
+                _logger.LogError(ex,"Error creating company");
+                throw ex;
             }
         }
 
-        public async Task DeleteCompany(Guid companyId)
+        public async Task DeleteCompanyAsync(Guid companyId)
         {
-            var company = await _context.Companies.FindAsync(companyId);
-            company.DeleteCompany();
-            await _context.SaveChangesAsync();
+            try
+            {
+                var company = await ValidateCompany(companyId);
+                company.DeleteCompany();
+                await _context.SaveChangesAsync();  
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting company");
+                throw ex;
+            }
         }
 
-        public async Task EditCompany(Company editedCompany)
+        public async Task EditCompanyAsync(Company editedCompany, Guid userId)
         {
-            var company = await _context.Companies.FindAsync(editedCompany.Id);
-            company.EditCompany(editedCompany);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var company = await ValidateCompany(editedCompany.Id);
+                company.EditCompany(editedCompany, userId);
+                await _context.SaveChangesAsync(); 
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error editing company");
+                throw ex;
+            }
         }
 
-        public async Task<Company> GetCompanyById(Guid companyId)
+        public async Task<Company> GetCompanyByIdAsync(Guid companyId)
         {
-            return await _context.Companies.FindAsync(companyId);
+            try
+            {
+                return await _context.Companies.FindAsync(companyId);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error getting company");
+                throw ex;
+            }
+        }
+
+        private async Task<Company> ValidateCompany(Guid id)
+        {
+            var company = await _context.Companies.FindAsync(id);
+            if (company == null)
+            {
+                var ex = new Exception("Unable to find company");
+                _logger.LogError(ex, "Unable to find company");
+                throw ex;
+            }
+            return company;
         }
     }
 }

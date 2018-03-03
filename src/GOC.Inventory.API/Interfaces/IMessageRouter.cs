@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace GOC.Inventory.API.Interfaces
 {
     public interface IMessageRouter
     {
-        void Route(string message);
+        Task RouteAsync(string message);
     }
 }

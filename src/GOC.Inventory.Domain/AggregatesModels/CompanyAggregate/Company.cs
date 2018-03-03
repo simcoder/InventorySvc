@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GOC.Inventory.Domain.AggregatesModels.ValueObjects;
 using GOC.Inventory.Domain.Events;
+using Newtonsoft.Json;
 
 namespace GOC.Inventory.Domain.AggregatesModels.CompanyAggregate
 {
@@ -11,11 +12,14 @@ namespace GOC.Inventory.Domain.AggregatesModels.CompanyAggregate
         public string PhoneNumber { get; private set; }
         public Address Address { get; private set; }
         public DateTime CreatedDateUtc { get; private set; }
-        public Guid CreatedByUserId { get; private set; }
-        public Guid? LastUpdatedUserId { get; private set; }
-
-
         public bool IsDeleted { get; private set; }
+
+        //needed for private setter properties
+        [JsonProperty]
+        public Guid CreatedByUserId { get; private set; }
+        //needed for private setter properties
+        [JsonProperty]
+        public Guid? LastUpdatedUserId { get; private set; }
 
         //not persisted
         public IList<IDomainEvent> Events { get; private set; }
@@ -39,11 +43,12 @@ namespace GOC.Inventory.Domain.AggregatesModels.CompanyAggregate
             IsDeleted = true;
         }
 
-        public void EditCompany(Company editedCompany)
+        public void EditCompany(Company editedCompany, Guid userId)
         {
             Name = editedCompany.Name;
             Address = editedCompany.Address;
             PhoneNumber = editedCompany.PhoneNumber;
+            LastUpdatedUserId = userId;
         }
     }
 }

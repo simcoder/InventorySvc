@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GOC.Inventory.Domain.AggregatesModels.CompanyAggregate;
 using GOC.Inventory.Domain.AggregatesModels.InventoryAggregate;
 using Microsoft.Extensions.Logging;
 
@@ -44,12 +43,12 @@ namespace GOC.Inventory.Infrastructure.Repositories
             return inventoryItem;
         }
 
-        public async Task DeleteInventoryItem(Guid id)
+        public async Task DeleteInventoryItem(Guid id, Guid userId)
         {
             try
             {
                 Item item = await _context.Items.FindAsync(id);
-                item.DeleteItem();
+                item.DeleteItem(userId);
                 await _context.SaveChangesAsync();
                 //raise event
             }
@@ -60,7 +59,7 @@ namespace GOC.Inventory.Infrastructure.Repositories
             }
         }
 
-        public async Task MarkAsSold(Guid id, Guid companyId)
+        public async Task MarkAsSold(Guid id, Guid companyId, Guid userId)
         {
             try
             {

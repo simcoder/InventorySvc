@@ -8,13 +8,17 @@ namespace GOC.Inventory.Domain.Events
     public class CompanyCreated : IDomainEvent
     {
         
-        [JsonProperty]
+        [JsonProperty()]
         public DateTime DateOccurredUtc { get; private set; }
+
         [JsonProperty]
         public Company CompanyCreatedObj { get; private set; }
 
-        public CompanyCreated(Company company, DateTime dateAdded)
+        public Guid UserId { get; private set; }
+
+        public CompanyCreated(Company company, DateTime dateAdded, Guid userId)
         {
+            UserId = userId;
             CompanyCreatedObj = company;
             DateOccurredUtc = dateAdded;
         }

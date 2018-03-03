@@ -9,12 +9,17 @@ namespace GOC.Inventory.Domain.Events
     {
         public DateTime DateOccurredUtc { get; private set; }
 
+        [JsonProperty]
         public Item Item { get; private set; }
 
-        public ItemCreated(Item item, DateTime dateAdded)
+        public Guid UserId { get; private set; }
+
+
+        public ItemCreated(Item item, DateTime dateAdded, Guid userId)
         {
             Item = item;
             DateOccurredUtc = dateAdded;
+            UserId = userId;
         }
 
         private ItemCreated()

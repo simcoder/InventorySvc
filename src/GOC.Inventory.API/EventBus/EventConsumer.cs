@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using EasyNetQ;
 using EasyNetQ.Topology;
@@ -27,7 +28,7 @@ namespace GOC.Inventory.API.EventBus
                                                          _bus.Consume(queue, (body, properties, info) => Task.Factory.StartNew(() =>
                                                          {
                                                             var message = Encoding.UTF8.GetString(body);
-                                                            _messageRouter.Route(message);             
+                                                             _messageRouter.RouteAsync(message);             
 
                                                          }).ContinueWith(task =>
                                                          {
@@ -44,11 +45,7 @@ namespace GOC.Inventory.API.EventBus
                                                       });
         public void Consume (IQueue queue)
         {
-            _bus.Consume(queue, (body, properties, info) => Task.Factory.StartNew(() =>
-            {
-                var message = Encoding.UTF8.GetString(body);
-                _messageRouter.Route(message); 
-            }));
+            throw new NotImplementedException();
         }
     }
 }
