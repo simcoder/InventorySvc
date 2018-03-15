@@ -15,11 +15,14 @@ namespace GOC.Inventory.Domain.Events
             UserId = userId;
         }
 
+        [JsonProperty()]
         public Company CompanyEditedObj { get; private set; }
 
+        [JsonProperty()]
         public DateTime DateOccurredUtc { get; private set; }
 
         public Guid UserId { get; private set; }
 
+        private CompanyEdited() { }
     }
 }
