@@ -46,7 +46,7 @@ namespace GOC.Inventory.Domain.AggregatesModels.CompanyAggregate
         public void EditCompany(Company editedCompany, Guid userId)
         {
             Name = editedCompany.Name;
-            Address = editedCompany.Address;
+            //Address = editedCompany.Address;
             PhoneNumber = editedCompany.PhoneNumber;
             LastUpdatedUserId = userId;
         }
