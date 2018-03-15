@@ -3,10 +3,7 @@ WORKDIR /app
 
 FROM microsoft/aspnetcore-build:2.0 AS build
 WORKDIR /src
-COPY src/GOC.InventoryService.sln ./
-COPY src/GOC.Inventory.Domain/GOC.Inventory.Domain.csproj src/GOC.Inventory.Domain
-COPY src/GOC.Inventory.API/GOC.Inventory.API.csproj src/GOC.Inventory.API
-COPY src/GOC.Inventory.Infrastructure/GOC.Inventory.Infrastructure.csproj src/GOC.Inventory.Infrastructure
+COPY /src ./
 
 RUN dotnet restore
 COPY /src ./
